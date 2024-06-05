@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>FAQ Chatbot - Stile Hive</title>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Stile Hive</h1>
+        <h2>FAQ Chatbot</h2>
+        <div id="chat-box">
+            <!-- Chat messages will appear here -->
+        </div>
+        <input type="text" id="user-input" placeholder="Ask a question...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+        function sendMessage() {
+            var userQuery = document.getElementById('user-input').value;
+            if (userQuery) {
+                fetch('/get_response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'query=' + encodeURIComponent(userQuery)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var chatBox = document.getElementById('chat-box');
+                    chatBox.innerHTML += '<div class="user-message">' + userQuery + '</div>';
+                    chatBox.innerHTML += '<div class="bot-response">' + data.response + '</div>';
+                    document.getElementById('user-input').value = '';
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+            }
+        }
+    </script>
+</body>
+</html>
